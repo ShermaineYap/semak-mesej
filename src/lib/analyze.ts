@@ -124,6 +124,8 @@ export async function analyze(
       const check = ModelOutput.safeParse(json);
       if (check.success) parsed = check.data;
     } catch (e) {
+      // Server log for diagnosing failures. Never includes the API key.
+      console.warn(`[analyze] attempt ${attempts} failed: ${e instanceof Error ? e.message.slice(0, 300) : String(e)}`);
       if (e instanceof ProviderError && e.kind !== "bad_response") {
         return emptyResult("model_unavailable", pasted, source, extractIdentifiers(pasted), attempts);
       }
