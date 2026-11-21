@@ -1,0 +1,349 @@
+{
+  "runId": "dev-gemini-2026-11-21T12-11-14-489Z",
+  "setName": "dev",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash",
+  "repeats": 1,
+  "rows": [
+    {
+      "id": "S003",
+      "cls": "scam",
+      "expected": [
+        "urgency",
+        "impersonation",
+        "suspicious_link",
+        "credential_request",
+        "threat"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "scam_signs",
+            "score": 4
+          },
+          "text": "This account is about to be banned due to abnormal activity.Please log in immediately to have it unbanned: https://goo[.]su/i.whatsApp",
+          "source": "text",
+          "findings": [
+            {
+              "tactic": "threat",
+              "quote": "This account is about to be banned due to abnormal activity.",
+              "span": {
+                "start": 0,
+                "end": 60
+              },
+              "explanation": {
+                "en": "The message threatens to ban your account due to abnormal activity.",
+                "ms": "Mesej ini mengancam untuk menyekat akaun anda disebabkan oleh aktiviti luar biasa."
+              }
+            },
+            {
+              "tactic": "urgency",
+              "quote": "Please log in immediately",
+              "span": {
+                "start": 60,
+                "end": 85
+              },
+              "explanation": {
+                "en": "It creates urgency by telling you to log in immediately.",
+                "ms": "Ia mendesak anda untuk log masuk dengan serta-merta."
+              }
+            },
+            {
+              "tactic": "suspicious_link",
+              "quote": "https://goo[.]su/i.whatsApp",
+              "span": {
+                "start": 107,
+                "end": 134
+              },
+              "explanation": {
+                "en": "It asks you to click on a link to unban the account.",
+                "ms": "Ia meminta anda menekan pautan untuk membatalkan sekatan akaun."
+              }
+            }
+          ],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "https://goo[.]su/i.whatsApp"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "language": "en",
+            "messageKind": "account ban threat",
+            "claimedSender": "WhatsApp",
+            "readability": "clear",
+            "model": "gemini-3.5-flash",
+            "latencyMs": 42099,
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S004",
+      "cls": "scam",
+      "expected": [
+        "urgency",
+        "impersonation",
+        "suspicious_link",
+        "payment_request"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "scam_signs",
+            "score": 5
+          },
+          "text": "Postal Malaysia: Due to incorrect address and postal code, your parcel cannot be delivered and the cost of redelivery will be borne by you. Please click on the link below to change your address and request a new delivery service:\n\nhttp://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0\n\nPlease replace it within 12 hours to avoid unnecessary damage.\nHave a nice day, Post Malaysia!",
+          "source": "text",
+          "findings": [
+            {
+              "tactic": "impersonation",
+              "quote": "Postal Malaysia",
+              "span": {
+                "start": 0,
+                "end": 15
+              },
+              "explanation": {
+                "en": "The message claims to be from Pos Malaysia.",
+                "ms": "Mesej ini mendakwa ia berasal daripada Pos Malaysia."
+              }
+            },
+            {
+              "tactic": "suspicious_link",
+              "quote": "http://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0",
+              "span": {
+                "start": 231,
+                "end": 274
+              },
+              "explanation": {
+                "en": "It asks you to click on a shortened link to update your details.",
+                "ms": "Ia meminta anda menekan pautan pendek untuk mengemas kini maklumat anda."
+              }
+            },
+            {
+              "tactic": "urgency",
+              "quote": "within 12 hours",
+              "span": {
+                "start": 294,
+                "end": 309
+              },
+              "explanation": {
+                "en": "It sets a short deadline to rush you into acting quickly.",
+                "ms": "Ia meletakkan tempoh masa yang singkat untuk memaksa anda bertindak cepat."
+              }
+            },
+            {
+              "tactic": "threat",
+              "quote": "to avoid unnecessary damage",
+              "span": {
+                "start": 310,
+                "end": 337
+              },
+              "explanation": {
+                "en": "It threatens potential damage or loss if you do not comply.",
+                "ms": "Ia mengancam potensi kerosakan atau kerugian jika anda tidak mengikut arahan."
+              }
+            }
+          ],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "http://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "language": "en",
+            "messageKind": "parcel redelivery",
+            "claimedSender": "Postal Malaysia",
+            "readability": "clear",
+            "model": "gemini-3.5-flash",
+            "latencyMs": 2224,
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S006",
+      "cls": "scam",
+      "expected": [
+        "impersonation",
+        "suspicious_link",
+        "credential_request",
+        "too_good_to_be_true"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "RM0 SARA: Starting from January 1, 2026, a one-time assistance of RM300 will be deposited into your Touch'n Go bank account. Please confirm eligibility and log in to the official website to submit the application: https://touchngo[.]guru/my\n - Ministry of Finance (MOF)",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "https://touchngo[.]guru/my"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S009",
+      "cls": "scam",
+      "expected": [
+        "too_good_to_be_true"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "for your understanding purpose i will give you 2 chanels to subscribe once you complete you will get paid RM 30",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S011",
+      "cls": "scam",
+      "expected": [
+        "urgency",
+        "suspicious_link",
+        "too_good_to_be_true"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "Dear customer, act now! Your 3022 points are expiring soon. Redeem for awesome rewards at our Rewards Center: [Link]. Don't miss out – click now and enjoy the perks!",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S020",
+      "cls": "scam",
+      "expected": [
+        "impersonation",
+        "payment_request",
+        "suspicious_link"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "PDRM Notice:You have an unpaid electronic parking ticket. If you have any outstanding fines, please verify the details and pay through official channels. Click here.\npdrm[.]mayu2u[.]com/m8zfdj",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "pdrm[.]mayu2u[.]com/m8zfdj"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S027",
+      "cls": "scam",
+      "expected": [],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "Salam..Sy nampak tdi gmbar awak kt group viral porn npe ade org salah guna gmbar awak bahaya sngt",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    }
+  ]
+}

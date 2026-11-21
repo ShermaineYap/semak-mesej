@@ -64,40 +64,81 @@ async function postJson(
   return res.json();
 }
 
-export function geminiProvider(apiKey: string, model: string): Provider {
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Gemini with overload handling: on 503/429 the same model is retried once
+ * after a pause, then the fallback model is tried. The model that actually
+ * answered is reported in the response.
+ */
+export function geminiProvider(
+  apiKey: string,
+  model: string,
+  opts: { fallbackModel?: string; thinkingLevel?: string; retryDelayMs?: number } = {},
+): Provider {
+  const thinkingLevel = opts.thinkingLevel ?? "low";
+  const retryDelayMs = opts.retryDelayMs ?? 2000;
+
+  async function once(m: string, req: ModelRequest, signal?: AbortSignal): Promise<string> {
+    const parts: unknown[] = [{ text: req.userText }];
+    if (req.image) {
+      parts.push({ inline_data: { mime_type: req.image.mimeType, data: req.image.base64 } });
+    }
+    const generationConfig: Record<string, unknown> = {
+      temperature: 0,
+      responseMimeType: "application/json",
+      responseJsonSchema: req.jsonSchema,
+    };
+    // Gemini 3.x reasons before answering; "low" keeps latency usable.
+    if (/gemini-3/.test(m) && thinkingLevel !== "default") {
+      generationConfig.thinkingConfig = { thinkingLevel };
+    }
+    const data = (await postJson(
+      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(m)}:generateContent`,
+      { "x-goog-api-key": apiKey },
+      {
+        systemInstruction: { parts: [{ text: req.system }] },
+        contents: [{ role: "user", parts }],
+        generationConfig,
+      },
+      signal,
+    )) as {
+      candidates?: { content?: { parts?: { text?: string; thought?: boolean }[] }; finishReason?: string }[];
+    };
+    const text =
+      data.candidates?.[0]?.content?.parts
+        ?.filter((p) => !p.thought)
+        .map((p) => p.text ?? "")
+        .join("") ?? "";
+    if (!text) {
+      throw new ProviderError(
+        `Empty response (finishReason: ${data.candidates?.[0]?.finishReason ?? "none"})`,
+        "bad_response",
+      );
+    }
+    return text;
+  }
+
   return {
     name: "gemini",
     model,
     async call(req, signal) {
       const t0 = Date.now();
-      const parts: unknown[] = [{ text: req.userText }];
-      if (req.image) {
-        parts.push({ inline_data: { mime_type: req.image.mimeType, data: req.image.base64 } });
+      const plan = [model, model, ...(opts.fallbackModel ? [opts.fallbackModel] : [])];
+      let lastErr: unknown;
+      for (let i = 0; i < plan.length; i++) {
+        try {
+          const rawText = await once(plan[i], req, signal);
+          return { rawText, model: plan[i], latencyMs: Date.now() - t0 };
+        } catch (e) {
+          lastErr = e;
+          const transient =
+            e instanceof ProviderError && (e.kind === "rate_limited" || /HTTP 503|HTTP 500|timed out/.test(e.message));
+          if (!transient) throw e;
+          if (i < plan.length - 1 && plan[i + 1] === plan[i]) await sleep(retryDelayMs);
+        }
       }
-      const data = (await postJson(
-        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-        { "x-goog-api-key": apiKey },
-        {
-          systemInstruction: { parts: [{ text: req.system }] },
-          contents: [{ role: "user", parts }],
-          generationConfig: {
-            temperature: 0,
-            responseMimeType: "application/json",
-            responseJsonSchema: req.jsonSchema,
-          },
-        },
-        signal,
-      )) as {
-        candidates?: { content?: { parts?: { text?: string }[] }; finishReason?: string }[];
-      };
-      const text = data.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("") ?? "";
-      if (!text) {
-        throw new ProviderError(
-          `Empty response (finishReason: ${data.candidates?.[0]?.finishReason ?? "none"})`,
-          "bad_response",
-        );
-      }
-      return { rawText: text, model, latencyMs: Date.now() - t0 };
+      throw lastErr;
     },
   };
 }
@@ -143,7 +184,10 @@ export function groqProvider(apiKey: string, model: string): Provider {
 /** Picks the provider from environment variables. Returns null if none is configured. */
 export function providerFromEnv(which = process.env.MODEL_PROVIDER ?? "gemini"): Provider | null {
   if (which === "gemini" && process.env.GEMINI_API_KEY) {
-    return geminiProvider(process.env.GEMINI_API_KEY, process.env.GEMINI_MODEL ?? "gemini-2.5-flash");
+    return geminiProvider(process.env.GEMINI_API_KEY, process.env.GEMINI_MODEL ?? "gemini-3.5-flash-lite", {
+      fallbackModel: process.env.GEMINI_FALLBACK_MODEL ?? "gemini-3.5-flash",
+      thinkingLevel: process.env.GEMINI_THINKING ?? "low",
+    });
   }
   if (which === "groq" && process.env.GROQ_API_KEY) {
     return groqProvider(process.env.GROQ_API_KEY, process.env.GROQ_MODEL ?? "meta-llama/llama-4-scout-17b-16e-instruct");

@@ -1,0 +1,253 @@
+{
+  "runId": "dev-gemini-2026-11-21T12-13-35-958Z",
+  "setName": "dev",
+  "provider": "gemini",
+  "model": "gemini-3.8-flash",
+  "repeats": 1,
+  "rows": [
+    {
+      "id": "S003",
+      "cls": "scam",
+      "expected": [
+        "urgency",
+        "impersonation",
+        "suspicious_link",
+        "credential_request",
+        "threat"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "This account is about to be banned due to abnormal activity.Please log in immediately to have it unbanned: https://goo[.]su/i.whatsApp",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "https://goo[.]su/i.whatsApp"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S004",
+      "cls": "scam",
+      "expected": [
+        "urgency",
+        "impersonation",
+        "suspicious_link",
+        "payment_request"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "Postal Malaysia: Due to incorrect address and postal code, your parcel cannot be delivered and the cost of redelivery will be borne by you. Please click on the link below to change your address and request a new delivery service:\n\nhttp://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0\n\nPlease replace it within 12 hours to avoid unnecessary damage.\nHave a nice day, Post Malaysia!",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "http://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S006",
+      "cls": "scam",
+      "expected": [
+        "impersonation",
+        "suspicious_link",
+        "credential_request",
+        "too_good_to_be_true"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "RM0 SARA: Starting from January 1, 2026, a one-time assistance of RM300 will be deposited into your Touch'n Go bank account. Please confirm eligibility and log in to the official website to submit the application: https://touchngo[.]guru/my\n - Ministry of Finance (MOF)",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "https://touchngo[.]guru/my"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S009",
+      "cls": "scam",
+      "expected": [
+        "too_good_to_be_true"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "for your understanding purpose i will give you 2 chanels to subscribe once you complete you will get paid RM 30",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S011",
+      "cls": "scam",
+      "expected": [
+        "urgency",
+        "suspicious_link",
+        "too_good_to_be_true"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "Dear customer, act now! Your 3022 points are expiring soon. Redeem for awesome rewards at our Rewards Center: [Link]. Don't miss out – click now and enjoy the perks!",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S020",
+      "cls": "scam",
+      "expected": [
+        "impersonation",
+        "payment_request",
+        "suspicious_link"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "PDRM Notice:You have an unpaid electronic parking ticket. If you have any outstanding fines, please verify the details and pay through official channels. Click here.\npdrm[.]mayu2u[.]com/m8zfdj",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "pdrm[.]mayu2u[.]com/m8zfdj"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S027",
+      "cls": "scam",
+      "expected": [],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "Salam..Sy nampak tdi gmbar awak kt group viral porn npe ade org salah guna gmbar awak bahaya sngt",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    }
+  ]
+}

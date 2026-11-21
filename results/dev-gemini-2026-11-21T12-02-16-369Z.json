@@ -1,0 +1,402 @@
+{
+  "runId": "dev-gemini-2026-11-21T12-02-16-369Z",
+  "setName": "dev",
+  "provider": "gemini",
+  "model": "gemini-3.5-flash",
+  "repeats": 1,
+  "rows": [
+    {
+      "id": "S003",
+      "cls": "scam",
+      "expected": [
+        "urgency",
+        "impersonation",
+        "suspicious_link",
+        "credential_request",
+        "threat"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "scam_signs",
+            "score": 7
+          },
+          "text": "This account is about to be banned due to abnormal activity.Please log in immediately to have it unbanned: https://goo[.]su/i.whatsApp",
+          "source": "text",
+          "findings": [
+            {
+              "tactic": "threat",
+              "quote": "This account is about to be banned",
+              "span": {
+                "start": 0,
+                "end": 34
+              },
+              "explanation": {
+                "en": "The message threatens that your account will be banned if you do not act.",
+                "ms": "Mesej ini mengancam bahawa akaun anda akan disekat jika anda tidak bertindak."
+              }
+            },
+            {
+              "tactic": "credential_request",
+              "quote": "Please log in",
+              "span": {
+                "start": 60,
+                "end": 73
+              },
+              "explanation": {
+                "en": "The message asks you to log in to your account.",
+                "ms": "Mesej ini meminta anda untuk log masuk ke akaun anda."
+              }
+            },
+            {
+              "tactic": "urgency",
+              "quote": "immediately",
+              "span": {
+                "start": 74,
+                "end": 85
+              },
+              "explanation": {
+                "en": "The message pressures you to act immediately.",
+                "ms": "Mesej ini mendesak anda untuk bertindak dengan segera."
+              }
+            },
+            {
+              "tactic": "suspicious_link",
+              "quote": "https://goo[.]su/i.whatsApp",
+              "span": {
+                "start": 107,
+                "end": 134
+              },
+              "explanation": {
+                "en": "The message asks you to click on a link.",
+                "ms": "Mesej ini meminta anda menekan satu pautan."
+              }
+            }
+          ],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "https://goo[.]su/i.whatsApp"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "language": "en",
+            "messageKind": "account ban warning",
+            "claimedSender": "",
+            "readability": "clear",
+            "model": "gemini-3.5-flash",
+            "latencyMs": 5565,
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        true
+      ]
+    },
+    {
+      "id": "S004",
+      "cls": "scam",
+      "expected": [
+        "urgency",
+        "impersonation",
+        "suspicious_link",
+        "payment_request"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "Postal Malaysia: Due to incorrect address and postal code, your parcel cannot be delivered and the cost of redelivery will be borne by you. Please click on the link below to change your address and request a new delivery service:\n\nhttp://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0\n\nPlease replace it within 12 hours to avoid unnecessary damage.\nHave a nice day, Post Malaysia!",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "http://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        true
+      ]
+    },
+    {
+      "id": "S006",
+      "cls": "scam",
+      "expected": [
+        "impersonation",
+        "suspicious_link",
+        "credential_request",
+        "too_good_to_be_true"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "cant_tell",
+            "score": 0,
+            "reason": "model_unavailable"
+          },
+          "text": "RM0 SARA: Starting from January 1, 2026, a one-time assistance of RM300 will be deposited into your Touch'n Go bank account. Please confirm eligibility and log in to the official website to submit the application: https://touchngo[.]guru/my\n - Ministry of Finance (MOF)",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "https://touchngo[.]guru/my"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    },
+    {
+      "id": "S009",
+      "cls": "scam",
+      "expected": [
+        "too_good_to_be_true"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "some_signs",
+            "score": 2
+          },
+          "text": "for your understanding purpose i will give you 2 chanels to subscribe once you complete you will get paid RM 30",
+          "source": "text",
+          "findings": [
+            {
+              "tactic": "too_good_to_be_true",
+              "quote": "once you complete you will get paid RM 30",
+              "span": {
+                "start": 70,
+                "end": 111
+              },
+              "explanation": {
+                "en": "It offers easy money for completing a simple task like subscribing to channels.",
+                "ms": "Ia menawarkan wang mudah untuk menyelesaikan tugasan mudah seperti melanggan saluran."
+              }
+            }
+          ],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "language": "en",
+            "messageKind": "paid task for subscribing to channels",
+            "claimedSender": "",
+            "readability": "clear",
+            "model": "gemini-3.5-flash",
+            "latencyMs": 3337,
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        true
+      ]
+    },
+    {
+      "id": "S011",
+      "cls": "scam",
+      "expected": [
+        "urgency",
+        "suspicious_link",
+        "too_good_to_be_true"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "some_signs",
+            "score": 2
+          },
+          "text": "Dear customer, act now! Your 3022 points are expiring soon. Redeem for awesome rewards at our Rewards Center: [Link]. Don't miss out – click now and enjoy the perks!",
+          "source": "text",
+          "findings": [
+            {
+              "tactic": "urgency",
+              "quote": "act now!",
+              "span": {
+                "start": 15,
+                "end": 23
+              },
+              "explanation": {
+                "en": "The message creates time pressure by asking you to act immediately.",
+                "ms": "Mesej ini mewujudkan tekanan masa dengan meminta anda bertindak segera."
+              }
+            },
+            {
+              "tactic": "suspicious_link",
+              "quote": "[Link]",
+              "span": {
+                "start": 110,
+                "end": 116
+              },
+              "explanation": {
+                "en": "The message includes a link for you to click.",
+                "ms": "Mesej ini mengandungi pautan untuk anda tekan."
+              }
+            }
+          ],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "language": "en",
+            "messageKind": "points redemption reward",
+            "claimedSender": "",
+            "readability": "clear",
+            "model": "gemini-3.5-flash",
+            "latencyMs": 10052,
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        true
+      ]
+    },
+    {
+      "id": "S020",
+      "cls": "scam",
+      "expected": [
+        "impersonation",
+        "payment_request",
+        "suspicious_link"
+      ],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "scam_signs",
+            "score": 4
+          },
+          "text": "PDRM Notice:You have an unpaid electronic parking ticket. If you have any outstanding fines, please verify the details and pay through official channels. Click here.\npdrm[.]mayu2u[.]com/m8zfdj",
+          "source": "text",
+          "findings": [
+            {
+              "tactic": "impersonation",
+              "quote": "PDRM Notice",
+              "span": {
+                "start": 0,
+                "end": 11
+              },
+              "explanation": {
+                "en": "The message claims to be an official notice from PDRM.",
+                "ms": "Mesej ini mendakwa sebagai notis rasmi daripada PDRM."
+              }
+            },
+            {
+              "tactic": "payment_request",
+              "quote": "pay through official channels",
+              "span": {
+                "start": 123,
+                "end": 152
+              },
+              "explanation": {
+                "en": "The message asks you to pay an unpaid parking fine.",
+                "ms": "Mesej ini meminta anda membayar saman parkir yang belum dijelaskan."
+              }
+            },
+            {
+              "tactic": "suspicious_link",
+              "quote": "Click here.",
+              "span": {
+                "start": 154,
+                "end": 165
+              },
+              "explanation": {
+                "en": "The message asks you to click a link.",
+                "ms": "Mesej ini meminta anda menekan satu pautan."
+              }
+            }
+          ],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [
+              "pdrm[.]mayu2u[.]com/m8zfdj"
+            ],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "language": "en",
+            "messageKind": "unpaid parking fine",
+            "claimedSender": "PDRM",
+            "readability": "clear",
+            "model": "gemini-3.5-flash",
+            "latencyMs": 6767,
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        true
+      ]
+    },
+    {
+      "id": "S027",
+      "cls": "scam",
+      "expected": [],
+      "runs": [
+        {
+          "verdict": {
+            "verdict": "no_known_signs",
+            "score": 0
+          },
+          "text": "Salam..Sy nampak tdi gmbar awak kt group viral porn npe ade org salah guna gmbar awak bahaya sngt",
+          "source": "text",
+          "findings": [],
+          "droppedFindings": [],
+          "identifiers": {
+            "links": [],
+            "phones": [],
+            "accounts": []
+          },
+          "meta": {
+            "language": "ms",
+            "messageKind": "alleged photo misuse alert",
+            "claimedSender": "",
+            "readability": "clear",
+            "model": "gemini-3.5-flash",
+            "latencyMs": 7059,
+            "attempts": 1,
+            "promptVersion": "rubric-v1"
+          }
+        }
+      ],
+      "baseline": [
+        null
+      ]
+    }
+  ]
+}

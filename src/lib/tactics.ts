@@ -118,7 +118,7 @@ export const TACTICS: Record<TacticId, TacticDef> = {
     group: "pressure",
     label: { en: "Threatens you", ms: "Mengugut anda" },
     definition:
-      "Threatens arrest, legal action, a fine, a frozen or closed account, a summons, or blacklisting.",
+      "Threatens a penalty or loss if the reader does not act: arrest, legal action, a fine, a summons, blacklisting, a frozen, closed or restricted account, or losing a parcel, service or points.",
     weight: 2,
     genuineContrast: {
       en: "Police and courts don't settle cases by message or ask you to transfer money to clear your name.",
