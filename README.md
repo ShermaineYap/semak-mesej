@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Semak Mesej
 
-## Getting Started
+See the tactics in a suspicious WhatsApp, SMS or RCS message before you reply.
 
-First, run the development server:
+Paste a message (Malay, English, Chinese or a mix) or upload a screenshot. Semak Mesej highlights the exact words that use a known scam tactic (rushing you, asking for money or codes, pushing a link, threatening you, keeping you isolated) and shows what a genuine sender would do instead. Phone and account numbers it finds are passed to [Semak Mule](https://semakmule.rmp.gov.my/), the police database of reported numbers.
+
+It never says a message is "safe".
+
+> Status: in development for the Global AI Builder's Challenge (21 to 28 Nov 2026). Everything in this repository was built during the event.
+
+## How it works
+
+1. **Input checks (code).** Too short, a bare number, an untested script, or an over-long paste gets a "can't tell" answer and a next step. No AI call is made.
+2. **One AI call (structured output, temperature 0).** The model reads the message against a fixed 8-tactic rubric (`src/lib/tactics.ts`) and returns, for each tactic, the exact phrase it relied on. It does **not** return a verdict.
+3. **Quote check (code).** Every quoted phrase must actually appear in the message (`src/lib/verify.ts`). Phrases that don't are dropped and counted.
+4. **Verdict (code).** A weighted rule table over the verified tactics (`src/lib/verdict.ts`) gives *Scam tactics found*, *Some warning signs*, *No known tactics found (not proof it's safe)*, or *Can't tell*.
+
+Failures are handled without guessing: unreadable screenshots, model timeouts and invalid model output all produce "can't tell" and keep the user's input and previous result.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # add a Gemini API key from aistudio.google.com
+npm run dev                  # http://localhost:3000
+npm test                     # unit tests for the deterministic code
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`MODEL_PROVIDER=mock` runs a keyword stand-in so the UI can be developed without a key. It is development-only, refused on Vercel production, and none of its output is reported as a result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Evaluation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npx tsx scripts/eval.ts --set dev  --provider gemini              # prompt development
+npx tsx scripts/eval.ts --set test --provider gemini --repeats 3 --baseline
+```
 
-## Learn More
+The reference set (`data/messages.jsonl`) is real scam messages from public Malaysian advisories and news, plus genuine messages, each labelled by hand with the tactics it uses. Sources are in `data/SOURCES.md`. The prompt and weights are tuned on the `dev` split only. Results are written to `results/`.
 
-To learn more about Next.js, take a look at the following resources:
+## Third-party services
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Google Gemini API (message reading). On the free tier, Google may use inputs to improve its products, so remove names, IC and account numbers before checking.
+- Groq API (comparison model, optional).
+- Next.js, React, Tailwind CSS, Zod, Vitest.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Limitations
 
-## Deploy on Vercel
+To be completed from the measured results. Known so far:
+- Tested only on Malay, English and Chinese text.
+- For screenshots, quotes are checked against the model's own transcript, which is weaker than checking pasted text.
+- A clean result is not proof of safety; new scams may use tactics outside the rubric.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Licence
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
