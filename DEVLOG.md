@@ -35,3 +35,11 @@ Notable outputs: S027 (a "your photo is in a viral group" lure, labelled with no
 - Added "Try an example" buttons that replay **saved real results** (`scripts/record-samples.ts`, stored with model and date in `src/data/samples.json`) so judges and visitors don't spend the free quota. The page labels them as saved results.
 - Observed run-to-run variation at temperature 0: S027 got `threat` ("bahaya sngt") in the dev run and `urgency` (same phrase) when recording samples. To be measured properly with 3 repeats on the test set (R2c).
 - Browser test caught a test-script bug, not an app bug: Playwright's text match is case-insensitive, so "Semak mesej" clicked the "Semak Mesej" logo. Tests now click the button by role.
+
+## Sun 22 Nov 2026, early: deployed
+
+- Live at https://semak-mesej.vercel.app (Vercel, Hobby). Only `GEMINI_API_KEY` is set there; model names use the code defaults.
+- The first live check returned "model unavailable" and was handled safely (error shown, input kept). The cause wasn't recorded because provider errors weren't logged; added a server log line (message only, no key). After redeploying, live checks worked: pasted S004 gave `scam_signs` in 3.0 s on gemini-3.5-flash-lite.
+- **Screenshot input, live** (`docs/evidence/chat_S004.png`, a phone-chat rendering of the real message S004 made for this test): transcript correct, 3 tactics found, 0 quotes dropped, verdict `some_signs`. The same text pasted gave 4 tactics and `scam_signs`; the screenshot run missed `payment_request`. **To measure:** screenshot versions of the test set.
+- **Unreadable screenshot, live** (`docs/evidence/chat_S004_blurred.png`, the same image pixelated and blurred): `cant_tell / unreadable_image`, no findings shown (R3a).
+- **Bare number, live:** `cant_tell / identifier_only`, no AI call, Semak Mule link shown (R3b).
