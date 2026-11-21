@@ -1,0 +1,226 @@
+[
+  {
+    "id": "S004",
+    "label": {
+      "en": "Parcel fee (English)",
+      "ms": "Yuran bungkusan (Inggeris)"
+    },
+    "source": {
+      "name": "Priceshop Malaysia",
+      "url": "https://my.priceshop.com/en/news/scam-alert-malaysians-are-getting-sms-from-fake-pos-malaysia-about-undelivered-parcels"
+    },
+    "recordedAt": "2026-11-21T12:25:04.709Z",
+    "result": {
+      "verdict": {
+        "verdict": "scam_signs",
+        "score": 7
+      },
+      "text": "Postal Malaysia: Due to incorrect address and postal code, your parcel cannot be delivered and the cost of redelivery will be borne by you. Please click on the link below to change your address and request a new delivery service:\n\nhttp://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0\n\nPlease replace it within 12 hours to avoid unnecessary damage.\nHave a nice day, Post Malaysia!",
+      "source": "text",
+      "findings": [
+        {
+          "tactic": "impersonation",
+          "quote": "Postal Malaysia",
+          "span": {
+            "start": 0,
+            "end": 15
+          },
+          "explanation": {
+            "en": "The message claims to be from Postal Malaysia.",
+            "ms": "Mesej mendakwa dari Postal Malaysia."
+          }
+        },
+        {
+          "tactic": "payment_request",
+          "quote": "cost of redelivery will be borne by you",
+          "span": {
+            "start": 99,
+            "end": 138
+          },
+          "explanation": {
+            "en": "It states that you must pay for redelivery.",
+            "ms": "Ia menyatakan anda perlu menanggung kos penghantaran semula."
+          }
+        },
+        {
+          "tactic": "suspicious_link",
+          "quote": "http://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0",
+          "span": {
+            "start": 231,
+            "end": 274
+          },
+          "explanation": {
+            "en": "It asks you to click a link.",
+            "ms": "Ia meminta anda mengklik pautan."
+          }
+        },
+        {
+          "tactic": "urgency",
+          "quote": "within 12 hours",
+          "span": {
+            "start": 294,
+            "end": 309
+          },
+          "explanation": {
+            "en": "It creates pressure by giving a time limit.",
+            "ms": "Ia mengenakan tekanan dengan memberi had masa."
+          }
+        },
+        {
+          "tactic": "threat",
+          "quote": "to avoid unnecessary damage",
+          "span": {
+            "start": 310,
+            "end": 337
+          },
+          "explanation": {
+            "en": "It warns of negative consequences if you do not act.",
+            "ms": "Ia memberi amaran tentang kesan buruk jika anda tidak bertindak."
+          }
+        }
+      ],
+      "droppedFindings": [],
+      "identifiers": {
+        "links": [
+          "http://tinyurl[.]com/lsdK1hj?uYf=G1Q2LHdah0"
+        ],
+        "phones": [],
+        "accounts": []
+      },
+      "meta": {
+        "language": "en",
+        "messageKind": "parcel delivery issue",
+        "claimedSender": "Postal Malaysia",
+        "readability": "clear",
+        "model": "gemini-3.5-flash-lite",
+        "latencyMs": 4275,
+        "attempts": 1,
+        "promptVersion": "rubric-v1"
+      }
+    }
+  },
+  {
+    "id": "S012",
+    "label": {
+      "en": "Loan from a 'celebrity' (Malay)",
+      "ms": "Pinjaman 'selebriti' (Melayu)"
+    },
+    "source": {
+      "name": "SAYS (screenshot from X user)",
+      "url": "https://says.com/my/popular/tular-tangkap-layar-whatsapp-scammer-tunggang-nama-khairul-aming-minta-pinjam-rm200"
+    },
+    "recordedAt": "2026-11-21T12:25:15.613Z",
+    "result": {
+      "verdict": {
+        "verdict": "scam_signs",
+        "score": 5
+      },
+      "text": "Ni khairul aming. Saya nak mintak pinjam rm200 untuk bayar cukai sambal nyet. Bank saya tgh maintenance. Lepas habis maintenace saya akan beli semua akaun [NAME] & saya hadiahkan 1 bekas sambal nyet",
+      "source": "text",
+      "findings": [
+        {
+          "tactic": "impersonation",
+          "quote": "Ni khairul aming.",
+          "span": {
+            "start": 0,
+            "end": 17
+          },
+          "explanation": {
+            "en": "The message claims to be from a known celebrity or personality.",
+            "ms": "Mesej mendakwa datang daripada seorang selebriti atau personaliti terkenal."
+          }
+        },
+        {
+          "tactic": "payment_request",
+          "quote": "mintak pinjam rm200",
+          "span": {
+            "start": 27,
+            "end": 46
+          },
+          "explanation": {
+            "en": "The message asks you to send or transfer money.",
+            "ms": "Mesej meminta anda menghantar atau memindahkan wang."
+          }
+        },
+        {
+          "tactic": "too_good_to_be_true",
+          "quote": "saya hadiahkan 1 bekas sambal nyet",
+          "span": {
+            "start": 164,
+            "end": 198
+          },
+          "explanation": {
+            "en": "The message offers a gift or reward in return for your help.",
+            "ms": "Mesej menawarkan hadiah sebagai balasan atas bantuan anda."
+          }
+        }
+      ],
+      "droppedFindings": [],
+      "identifiers": {
+        "links": [],
+        "phones": [],
+        "accounts": []
+      },
+      "meta": {
+        "language": "ms",
+        "messageKind": "loan request and offer",
+        "claimedSender": "khairul aming",
+        "readability": "clear",
+        "model": "gemini-3.5-flash-lite",
+        "latencyMs": 10903,
+        "attempts": 1,
+        "promptVersion": "rubric-v1"
+      }
+    }
+  },
+  {
+    "id": "S027",
+    "label": {
+      "en": "'Your photo is in a group' (Malay)",
+      "ms": "'Gambar awak dalam grup' (Melayu)"
+    },
+    "source": {
+      "name": "SAYS Seismik (Telegram screenshot from netizen)",
+      "url": "https://says.com/my/seismik/video-beritahu-gambar-ada-di-group-lucah-telegram-ini-taktik-scam-baru-yang-bahaya"
+    },
+    "recordedAt": "2026-11-21T12:25:17.276Z",
+    "result": {
+      "verdict": {
+        "verdict": "some_signs",
+        "score": 1
+      },
+      "text": "Salam..Sy nampak tdi gmbar awak kt group viral porn npe ade org salah guna gmbar awak bahaya sngt",
+      "source": "text",
+      "findings": [
+        {
+          "tactic": "urgency",
+          "quote": "bahaya sngt",
+          "span": {
+            "start": 86,
+            "end": 97
+          },
+          "explanation": {
+            "en": "It creates fear by saying the situation is very dangerous.",
+            "ms": "Ia menimbulkan ketakutan dengan menyatakan keadaan sangat berbahaya."
+          }
+        }
+      ],
+      "droppedFindings": [],
+      "identifiers": {
+        "links": [],
+        "phones": [],
+        "accounts": []
+      },
+      "meta": {
+        "language": "ms",
+        "messageKind": "viral porn photo claim",
+        "claimedSender": "",
+        "readability": "clear",
+        "model": "gemini-3.5-flash-lite",
+        "latencyMs": 1663,
+        "attempts": 1,
+        "promptVersion": "rubric-v1"
+      }
+    }
+  }
+]

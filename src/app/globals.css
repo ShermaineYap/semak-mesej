@@ -1,10 +1,86 @@
 @import "tailwindcss";
+@import "@fontsource/atkinson-hyperlegible/400.css";
+@import "@fontsource/atkinson-hyperlegible/700.css";
+@import "@fontsource/atkinson-hyperlegible/400-italic.css";
 
-@theme inline {
-  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Noto Sans Mono", monospace;
+@theme {
+  --font-sans: "Atkinson Hyperlegible", ui-sans-serif, system-ui, sans-serif;
+  --font-phone: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  --color-page: #eef1f4;
+  --color-ink: #14213d;
+  --color-ink-soft: #4a5672;
+  --color-line: #cfd6df;
+  --color-wall: #dde4ea;
+  --color-alarm: #b3123a;
+  --color-caution: #f2b705;
+
+  /* highlighter pens, one per tactic group */
+  --color-pen-pressure: #ffe45c;
+  --color-pen-money: #ff9ec0;
+  --color-pen-access: #8ed8ff;
+  --color-pen-identity: #cdb8ff;
+  --color-pen-lure: #c4f27a;
 }
 
 body {
   font-family: var(--font-sans);
+  background: var(--color-page);
+  color: var(--color-ink);
+}
+
+/* A marker stroke: colour sits on the middle of the line, ends wrap per line */
+.pen {
+  --pen: var(--color-pen-pressure);
+  background-image: linear-gradient(
+    to bottom,
+    transparent 12%,
+    var(--pen) 12%,
+    var(--pen) 88%,
+    transparent 88%
+  );
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  border-radius: 0.2em 0.35em 0.25em 0.4em;
+  padding: 0 0.12em;
+  cursor: pointer;
+}
+.pen[data-group="pressure"] { --pen: var(--color-pen-pressure); }
+.pen[data-group="money"] { --pen: var(--color-pen-money); }
+.pen[data-group="access"] { --pen: var(--color-pen-access); }
+.pen[data-group="identity"] { --pen: var(--color-pen-identity); }
+.pen[data-group="lure"] { --pen: var(--color-pen-lure); }
+.pen[data-active="true"] { outline: 2px solid var(--color-ink); outline-offset: 1px; }
+
+.swatch[data-group="pressure"] { background: var(--color-pen-pressure); }
+.swatch[data-group="money"] { background: var(--color-pen-money); }
+.swatch[data-group="access"] { background: var(--color-pen-access); }
+.swatch[data-group="identity"] { background: var(--color-pen-identity); }
+.swatch[data-group="lure"] { background: var(--color-pen-lure); }
+
+/* Chat bubble with a tail, like the message arrived in */
+.bubble {
+  position: relative;
+  border-radius: 0.25rem 1.1rem 1.1rem 1.1rem;
+}
+.bubble::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -0.55rem;
+  border-top: 0.75rem solid white;
+  border-left: 0.6rem solid transparent;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .reveal { animation: reveal 380ms ease-out both; }
+  @keyframes reveal {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: none; }
+  }
 }

@@ -1,55 +1,62 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { AnalysisResult, VerifiedFinding } from "@/lib/analyze";
-import { TACTICS, type TacticGroup } from "@/lib/tactics";
+import { TACTICS } from "@/lib/tactics";
 import { CANT_TELL_COPY, SEMAK_MULE_URL, UI, VERDICT_COPY, type Lang } from "@/lib/copy";
 import type { CantTellReason } from "@/lib/precheck";
+import samplesJson from "@/data/samples.json";
 
-const GROUP_STYLE: Record<TacticGroup, { mark: string; chip: string }> = {
-  pressure: { mark: "bg-amber-200/80 decoration-amber-600", chip: "bg-amber-100 text-amber-900 border-amber-300" },
-  identity: { mark: "bg-sky-200/80 decoration-sky-600", chip: "bg-sky-100 text-sky-900 border-sky-300" },
-  money: { mark: "bg-rose-200/80 decoration-rose-600", chip: "bg-rose-100 text-rose-900 border-rose-300" },
-  access: { mark: "bg-violet-200/80 decoration-violet-600", chip: "bg-violet-100 text-violet-900 border-violet-300" },
-  lure: { mark: "bg-emerald-200/80 decoration-emerald-600", chip: "bg-emerald-100 text-emerald-900 border-emerald-300" },
-};
+interface Sample {
+  id: string;
+  label: Record<Lang, string>;
+  source: { name: string; url: string };
+  recordedAt: string;
+  result: AnalysisResult;
+}
+const SAMPLES = samplesJson as unknown as Sample[];
 
-const VERDICT_STYLE = {
-  scam_signs: "bg-rose-600 text-white",
-  some_signs: "bg-amber-400 text-stone-950",
-  no_known_signs: "bg-stone-700 text-white",
-  cant_tell: "bg-stone-200 text-stone-900",
-} as const;
+type Segment = { text: string; finding: VerifiedFinding | null; number: number };
 
-type Segment = { text: string; findings: VerifiedFinding[] };
-
+/** Split the message into plain and highlighted runs. Overlaps go to the earlier finding. */
 function segments(text: string, findings: VerifiedFinding[]): Segment[] {
-  const cuts = new Set([0, text.length]);
-  for (const f of findings) {
-    cuts.add(f.span.start);
-    cuts.add(f.span.end);
-  }
-  const sorted = [...cuts].sort((a, b) => a - b);
+  const sorted = [...findings].sort((a, b) => a.span.start - b.span.start);
   const out: Segment[] = [];
-  for (let i = 0; i < sorted.length - 1; i++) {
-    const [a, b] = [sorted[i], sorted[i + 1]];
-    out.push({
-      text: text.slice(a, b),
-      findings: findings.filter((f) => f.span.start <= a && f.span.end >= b),
-    });
-  }
+  let pos = 0;
+  sorted.forEach((f, i) => {
+    const start = Math.max(f.span.start, pos);
+    if (start >= f.span.end) return;
+    if (start > pos) out.push({ text: text.slice(pos, start), finding: null, number: 0 });
+    out.push({ text: text.slice(start, f.span.end), finding: f, number: i + 1 });
+    pos = f.span.end;
+  });
+  if (pos < text.length) out.push({ text: text.slice(pos), finding: null, number: 0 });
   return out;
 }
 
 async function fileToBase64(file: File): Promise<string> {
-  const buf = await file.arrayBuffer();
+  const bytes = new Uint8Array(await file.arrayBuffer());
   let binary = "";
-  const bytes = new Uint8Array(buf);
   for (let i = 0; i < bytes.length; i += 0x8000) {
     binary += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
   }
   return btoa(binary);
 }
+
+function formatDate(iso: string, lang: Lang) {
+  return new Date(iso).toLocaleDateString(lang === "ms" ? "ms-MY" : "en-MY", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+const VERDICT_TONE = {
+  scam_signs: "bg-alarm text-white",
+  some_signs: "bg-caution text-ink",
+  no_known_signs: "bg-white text-ink ring-2 ring-ink",
+  cant_tell: "bg-wall text-ink",
+} as const;
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("en");
@@ -58,8 +65,17 @@ export default function Home() {
   const [file, setFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [sample, setSample] = useState<Sample | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [active, setActive] = useState<string | null>(null);
+  const resultRef = useRef<HTMLElement>(null);
+
+  function show(r: AnalysisResult, s: Sample | null) {
+    setResult(r);
+    setSample(s);
+    setActive(null);
+    requestAnimationFrame(() => resultRef.current?.focus());
+  }
 
   async function check() {
     setBusy(true);
@@ -79,17 +95,15 @@ export default function Home() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(data.message ?? "Something went wrong.");
-        return; // keep the previous result on screen
+        setError(data.message ?? CANT_TELL_COPY.model_unavailable[lang]);
+        return; // the last result stays on screen
       }
       const r = data as AnalysisResult;
-      // A transient failure keeps the last good result; input checks replace it
       if (r.verdict.reason === "model_unavailable" || r.verdict.reason === "invalid_model_output") {
         setError(CANT_TELL_COPY[r.verdict.reason][lang]);
         return;
       }
-      setResult(r);
-      setActive(null);
+      show(r, null);
     } catch {
       setError(CANT_TELL_COPY.model_unavailable[lang]);
     } finally {
@@ -97,179 +111,257 @@ export default function Home() {
     }
   }
 
+  function trySample(s: Sample) {
+    setMode("text");
+    setText(s.result.text);
+    setError(null);
+    show(s.result, s);
+  }
+
   const segs = useMemo(() => (result ? segments(result.text, result.findings) : []), [result]);
+  const ordered = useMemo(
+    () => (result ? [...result.findings].sort((a, b) => a.span.start - b.span.start) : []),
+    [result],
+  );
   const canCheck = !busy && (mode === "text" ? text.trim().length > 0 : !!file);
+  const numbers = result ? [...result.identifiers.phones, ...result.identifiers.accounts] : [];
 
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8 text-stone-900">
-      <header className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Semak Mesej</h1>
-          <p className="mt-1 text-stone-600">{UI.tagline[lang]}</p>
-        </div>
-        <div className="flex rounded-full border border-stone-300 p-0.5 text-sm" role="group" aria-label="Language">
+    <main className="mx-auto max-w-6xl px-5 pb-16 pt-6 sm:px-8">
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-lg font-bold tracking-tight">Semak Mesej</p>
+        <div className="flex rounded-full bg-white p-1 text-sm ring-1 ring-line" role="group" aria-label="Language / Bahasa">
           {(["en", "ms"] as const).map((l) => (
             <button
               key={l}
               onClick={() => setLang(l)}
-              className={`rounded-full px-3 py-1 ${lang === l ? "bg-stone-900 text-white" : ""}`}
               aria-pressed={lang === l}
+              className={`rounded-full px-3 py-1 font-bold ${lang === l ? "bg-ink text-white" : "text-ink-soft"}`}
             >
-              {l === "en" ? "EN" : "BM"}
+              {l === "en" ? "English" : "Bahasa"}
             </button>
           ))}
         </div>
-      </header>
+      </div>
 
-      <section className="rounded-2xl border border-stone-200 bg-white p-4 shadow-sm">
-        <div className="mb-3 flex gap-2 text-sm" role="tablist">
-          {(["text", "image"] as const).map((m) => (
-            <button
-              key={m}
-              role="tab"
-              aria-selected={mode === m}
-              onClick={() => setMode(m)}
-              className={`rounded-lg px-3 py-1.5 ${mode === m ? "bg-stone-900 text-white" : "bg-stone-100"}`}
-            >
-              {m === "text" ? UI.pasteTab[lang] : UI.imageTab[lang]}
-            </button>
-          ))}
+      <section className="mt-10 grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:items-start">
+        <div className="max-w-xl">
+          <h1 className="text-[2.1rem] font-bold leading-[1.12] tracking-tight sm:text-5xl">{UI.headline[lang]}</h1>
+          <p className="mt-4 text-lg leading-relaxed text-ink-soft">{UI.intro[lang]}</p>
         </div>
-        {mode === "text" ? (
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder={UI.placeholder[lang]}
-            rows={6}
-            className="w-full resize-y rounded-xl border border-stone-300 p-3 font-mono text-sm focus:outline-2 focus:outline-stone-900"
-          />
-        ) : (
-          <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-stone-300 p-8 text-sm text-stone-600">
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              className="sr-only"
-              onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+
+        <div className="rounded-3xl bg-white p-4 ring-1 ring-line sm:p-5">
+          <div className="flex gap-1 rounded-xl bg-page p-1 text-sm" role="tablist">
+            {(["text", "image"] as const).map((m) => (
+              <button
+                key={m}
+                role="tab"
+                aria-selected={mode === m}
+                onClick={() => setMode(m)}
+                className={`flex-1 rounded-lg px-3 py-2 font-bold ${mode === m ? "bg-white shadow-sm" : "text-ink-soft"}`}
+              >
+                {m === "text" ? UI.pasteTab[lang] : UI.imageTab[lang]}
+              </button>
+            ))}
+          </div>
+
+          {mode === "text" ? (
+            <textarea
+              value={text}
+              onChange={(e) => setText(e.target.value)}
+              placeholder={UI.placeholder[lang]}
+              aria-label={UI.placeholder[lang]}
+              rows={5}
+              className="mt-3 w-full resize-y rounded-xl border border-line p-3 font-[family-name:var(--font-phone)] text-base leading-relaxed focus:border-ink focus:outline-none"
             />
-            {file ? file.name : UI.chooseImage[lang]}
-          </label>
-        )}
-        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-          <p className="max-w-xl text-xs text-stone-500">{UI.privacy[lang]}</p>
+          ) : (
+            <label className="mt-3 flex min-h-36 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-line p-6 text-center text-ink-soft focus-within:border-ink">
+              <input
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                className="sr-only"
+                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+              />
+              {file ? <span className="font-bold text-ink">{file.name}</span> : UI.chooseImage[lang]}
+            </label>
+          )}
+
           <button
             onClick={check}
             disabled={!canCheck}
-            className="rounded-xl bg-stone-900 px-5 py-2.5 font-semibold text-white disabled:opacity-40"
+            className="mt-3 w-full rounded-xl bg-ink px-5 py-3.5 text-lg font-bold text-white transition-opacity disabled:opacity-35"
           >
-            {busy ? UI.checking[lang] : UI.check[lang]}
+            {busy ? `${UI.checking[lang]}…` : UI.check[lang]}
           </button>
+          <p className="mt-3 text-sm leading-snug text-ink-soft">{UI.privacy[lang]}</p>
+
+          {SAMPLES.length > 0 && (
+            <div className="mt-4 border-t border-line pt-4">
+              <p className="text-sm text-ink-soft">{UI.tryExample[lang]}</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {SAMPLES.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => trySample(s)}
+                    className={`rounded-full px-3.5 py-1.5 text-sm font-bold ring-1 ${sample?.id === s.id ? "bg-ink text-white ring-ink" : "bg-white ring-line hover:ring-ink"}`}
+                  >
+                    {s.label[lang]}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
       {error && (
-        <div role="alert" className="mt-4 rounded-xl border border-stone-300 bg-stone-100 p-3 text-sm">
+        <p role="alert" className="mt-6 rounded-xl bg-white p-4 ring-2 ring-alarm">
           {error} {result && UI.previousKept[lang]}
-        </div>
+        </p>
       )}
 
       {result && (
-        <section className="mt-6 space-y-4" aria-live="polite">
-          <div className={`rounded-2xl p-5 ${VERDICT_STYLE[result.verdict.verdict]}`}>
-            <h2 className="text-2xl font-bold">{VERDICT_COPY[result.verdict.verdict].title[lang]}</h2>
-            <p className="mt-1 max-w-3xl">
+        <section ref={resultRef} tabIndex={-1} aria-live="polite" className="reveal mt-10 focus:outline-none">
+          <div className={`rounded-3xl p-6 sm:p-8 ${VERDICT_TONE[result.verdict.verdict]}`}>
+            <h2 className="text-3xl font-bold leading-tight sm:text-4xl">
+              {VERDICT_COPY[result.verdict.verdict].title[lang]}
+            </h2>
+            <p className="mt-2 max-w-[62ch] text-lg leading-relaxed">
               {result.verdict.verdict === "cant_tell"
                 ? CANT_TELL_COPY[result.verdict.reason as CantTellReason][lang]
                 : VERDICT_COPY[result.verdict.verdict].body[lang]}
             </p>
+            {result.verdict.reason === "identifier_only" && (
+              <a
+                href={SEMAK_MULE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-block rounded-xl bg-ink px-4 py-2.5 font-bold text-white"
+              >
+                {UI.checkOnSemakMule[lang]}
+              </a>
+            )}
           </div>
 
-          {result.text && (
-            <div className="rounded-2xl border border-stone-200 bg-white p-4">
-              <p className="whitespace-pre-wrap break-words font-mono text-sm leading-7">
-                {segs.map((s, i) =>
-                  s.findings.length === 0 ? (
-                    <span key={i}>{s.text}</span>
-                  ) : (
-                    <mark
-                      key={i}
-                      onClick={() => setActive(s.findings[0].tactic)}
-                      className={`cursor-pointer rounded px-0.5 underline decoration-2 underline-offset-4 ${GROUP_STYLE[TACTICS[s.findings[0].tactic].group].mark} ${active && s.findings.some((f) => f.tactic === active) ? "ring-2 ring-stone-900" : ""}`}
-                      title={s.findings.map((f) => TACTICS[f.tactic].label[lang]).join(", ")}
-                    >
-                      {s.text}
-                    </mark>
-                  ),
+          {result.text && result.verdict.reason !== "identifier_only" && (
+            <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-start">
+              {/* The message, as it arrived, marked up */}
+              <div className="rounded-3xl bg-wall p-5 sm:p-7 lg:sticky lg:top-6">
+                {result.source === "image" && (
+                  <p className="mb-3 text-sm text-ink-soft">{UI.fromScreenshot[lang]}</p>
                 )}
-              </p>
-              {result.droppedFindings.length > 0 && (
-                <p className="mt-3 text-xs text-stone-500">
-                  {result.droppedFindings.length} {UI.dropped[lang]}
-                </p>
-              )}
-            </div>
-          )}
-
-          {result.findings.length > 0 && (
-            <div className="grid gap-3">
-              <div className="hidden grid-cols-[1fr_1fr] gap-3 px-1 text-xs font-semibold uppercase tracking-wide text-stone-500 md:grid">
-                <span>{UI.thisMessage[lang]}</span>
-                <span>{UI.genuine[lang]}</span>
+                <div className="bubble ml-2 bg-white p-4 shadow-sm">
+                  <p className="whitespace-pre-wrap break-words font-[family-name:var(--font-phone)] text-[1.05rem] leading-[1.9]">
+                    {segs.map((s, i) =>
+                      s.finding ? (
+                        <mark
+                          key={i}
+                          className="pen text-ink"
+                          data-group={TACTICS[s.finding.tactic].group}
+                          data-active={active === s.finding.tactic}
+                          onClick={() => setActive(s.finding!.tactic)}
+                        >
+                          {s.text}
+                          <sup className="ml-0.5 font-sans text-[0.68rem] font-bold">{s.number}</sup>
+                        </mark>
+                      ) : (
+                        <span key={i}>{s.text}</span>
+                      ),
+                    )}
+                  </p>
+                </div>
+                {result.droppedFindings.length > 0 && (
+                  <p className="mt-3 text-sm text-ink-soft">
+                    {result.droppedFindings.length} {UI.dropped[lang]}
+                  </p>
+                )}
               </div>
-              {result.findings.map((f) => {
-                const t = TACTICS[f.tactic];
-                return (
-                  <article
-                    key={f.tactic}
-                    onClick={() => setActive(f.tactic)}
-                    className={`grid gap-3 rounded-2xl border bg-white p-4 md:grid-cols-[1fr_1fr] ${active === f.tactic ? "border-stone-900" : "border-stone-200"}`}
-                  >
-                    <div>
-                      <span className={`inline-block rounded-full border px-2.5 py-0.5 text-xs font-semibold ${GROUP_STYLE[t.group].chip}`}>
-                        {t.label[lang]}
-                      </span>
-                      <blockquote className="mt-2 border-l-4 border-stone-300 pl-3 font-mono text-sm">“{f.quote}”</blockquote>
-                      <p className="mt-2 text-sm">{f.explanation[lang]}</p>
-                    </div>
-                    <div className="rounded-xl bg-stone-50 p-3 text-sm text-stone-700">
-                      <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-stone-500 md:hidden">
-                        {UI.genuine[lang]}
-                      </span>
-                      {t.genuineContrast[lang]}
-                    </div>
-                  </article>
-                );
-              })}
+
+              {/* Margin notes, numbered in the order they appear in the message */}
+              <div>
+                {ordered.length === 0 ? (
+                  <p className="rounded-2xl bg-white p-5 text-lg ring-1 ring-line">{UI.noTactics[lang]}</p>
+                ) : (
+                  <ol className="space-y-3">
+                    {ordered.map((f, i) => {
+                      const t = TACTICS[f.tactic];
+                      const isActive = active === f.tactic;
+                      return (
+                        <li key={f.tactic}>
+                          <button
+                            onClick={() => setActive(f.tactic)}
+                            aria-pressed={isActive}
+                            className={`block w-full rounded-2xl bg-white p-5 text-left ring-1 transition-shadow ${isActive ? "ring-2 ring-ink" : "ring-line"}`}
+                          >
+                            <span className="flex items-baseline gap-3">
+                              <span
+                                className="swatch inline-grid size-7 shrink-0 place-items-center rounded-full text-sm font-bold"
+                                data-group={t.group}
+                                aria-hidden
+                              >
+                                {i + 1}
+                              </span>
+                              <span>
+                                <span className="block text-xl font-bold leading-snug">{t.label[lang]}</span>
+                                <span className="mt-1 block text-base leading-relaxed">{f.explanation[lang]}</span>
+                              </span>
+                            </span>
+                            <span className="mt-4 grid gap-2 border-t border-line pt-3 sm:grid-cols-[auto_1fr] sm:gap-x-4">
+                              <span className="text-sm font-bold text-ink-soft">{UI.realSender[lang]}</span>
+                              <span className="text-[0.95rem] leading-snug text-ink-soft">{t.genuineContrast[lang]}</span>
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ol>
+                )}
+
+                {(numbers.length > 0 || result.identifiers.links.length > 0) && (
+                  <div className="mt-5 rounded-2xl bg-white p-5 ring-1 ring-line">
+                    <h3 className="text-lg font-bold">{UI.numbersFound[lang]}</h3>
+                    <ul className="mt-3 space-y-3">
+                      {numbers.map((n) => (
+                        <li key={n} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                          <span className="font-[family-name:var(--font-phone)] font-bold">{n}</span>
+                          <a href={SEMAK_MULE_URL} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">
+                            {UI.checkOnSemakMule[lang]}
+                          </a>
+                        </li>
+                      ))}
+                      {result.identifiers.links.map((l) => (
+                        <li key={l}>
+                          <span className="break-all font-[family-name:var(--font-phone)] font-bold">{l.replace(/(?<!\[)\.(?!\])/g, "[.]")}</span>
+                          <span className="mt-0.5 block text-ink-soft">{UI.dontTap[lang]}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
-          {(result.identifiers.phones.length + result.identifiers.accounts.length + result.identifiers.links.length > 0) && (
-            <div className="rounded-2xl border border-stone-200 bg-white p-4 text-sm">
-              <h3 className="font-semibold">{UI.numbersFound[lang]}</h3>
-              <ul className="mt-2 space-y-1">
-                {[...result.identifiers.phones, ...result.identifiers.accounts].map((n) => (
-                  <li key={n} className="flex flex-wrap items-center gap-2">
-                    <code className="rounded bg-stone-100 px-1.5">{n}</code>
-                    <a href={SEMAK_MULE_URL} target="_blank" rel="noopener noreferrer" className="underline">
-                      {UI.checkOnSemakMule[lang]}
-                    </a>
-                  </li>
-                ))}
-                {result.identifiers.links.map((l) => (
-                  <li key={l} className="flex flex-wrap items-center gap-2">
-                    <code className="rounded bg-stone-100 px-1.5">{l.replace(/\./g, "[.]")}</code>
-                    <span className="text-stone-600">{UI.dontTap[lang]}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          <p className="text-sm text-stone-600">{UI.report[lang]}</p>
-          {result.meta.model && (
-            <p className="text-xs text-stone-400">
-              {result.meta.model} · {result.meta.promptVersion} · {result.meta.latencyMs} ms
+          <div className="mt-8 grid gap-2 text-ink-soft sm:grid-cols-2 sm:gap-6">
+            <p className="text-lg font-bold text-ink">{UI.report[lang]}</p>
+            <p className="text-sm leading-relaxed sm:text-right">
+              {sample ? (
+                <>
+                  {UI.savedResult[lang]} {formatDate(sample.recordedAt, lang)}, {sample.result.meta.model}.{" "}
+                  {UI.sourceLabel[lang]}:{" "}
+                  <a href={sample.source.url} target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">
+                    {sample.source.name}
+                  </a>
+                </>
+              ) : (
+                result.meta.model && (
+                  <>
+                    {UI.checkedWith[lang]} {result.meta.model}, {((result.meta.latencyMs ?? 0) / 1000).toFixed(1)} s
+                  </>
+                )
+              )}
             </p>
-          )}
+          </div>
         </section>
       )}
     </main>

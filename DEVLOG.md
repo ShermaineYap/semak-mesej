@@ -28,3 +28,10 @@ Seven development messages, one run each, fallback off so each row is one model.
 **Reliability change prompted by this:** the provider now retries a 503/429 once after 2 s, then switches to the fallback model, and records which model answered (unit-tested in `providers.test.ts`).
 
 Notable outputs: S027 (a "your photo is in a viral group" lure, labelled with no tactics) was marked "some signs" because the model quoted "bahaya sngt" ("very dangerous") as a threat. Under the rubric that is fear, not a threatened penalty, so the label stays empty and this counts as a tactic false positive.
+
+## Sat 21 Nov 2026, night: redesign and saved examples
+
+- Redesigned the UI for the real audience (people checking messages forwarded in family chats): Atkinson Hyperlegible (designed for low-vision readers), the message shown as the chat bubble it arrived in, highlighter colours per tactic group, numbered notes in the order they appear, each paired with what a real sender does (D3, D4b).
+- Added "Try an example" buttons that replay **saved real results** (`scripts/record-samples.ts`, stored with model and date in `src/data/samples.json`) so judges and visitors don't spend the free quota. The page labels them as saved results.
+- Observed run-to-run variation at temperature 0: S027 got `threat` ("bahaya sngt") in the dev run and `urgency` (same phrase) when recording samples. To be measured properly with 3 repeats on the test set (R2c).
+- Browser test caught a test-script bug, not an app bug: Playwright's text match is case-insensitive, so "Semak mesej" clicked the "Semak Mesej" logo. Tests now click the button by role.
