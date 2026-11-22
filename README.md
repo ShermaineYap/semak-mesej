@@ -35,7 +35,7 @@ npx tsx scripts/eval.ts --set dev  --provider gemini              # prompt devel
 npx tsx scripts/eval.ts --set test --provider gemini --repeats 3 --baseline
 ```
 
-The reference set (`data/messages.jsonl`) is real scam messages from public Malaysian advisories and news, plus genuine messages, each labelled by hand with the tactics it uses. Sources are in `data/SOURCES.md`. The prompt and weights are tuned on the `dev` split only. Results are written to `results/`.
+The reference set (`data/messages.jsonl`) holds real scam messages quoted from public Malaysian advisories and news, plus 50 written (synthetic) test cases kept in their own split. Each message is labelled with the tactics it uses (`data/LABELING.md`). Sources are in `data/SOURCES.md`. The prompt and weights are tuned on the `dev` split only. Results are written to `results/`.
 
 ## Third-party services
 
@@ -43,11 +43,26 @@ The reference set (`data/messages.jsonl`) is real scam messages from public Mala
 - Groq API (comparison model, optional).
 - Next.js, React, Tailwind CSS, Zod, Vitest.
 
+## Results
+
+Full tables are in `results/`, and the write-up in `docs/DEVPOST_DRAFT.md`. Each message was run 3 times; figures are first-run unless stated.
+
+| | Real scams (18) | Written test cases (22 scam, 28 genuine) |
+|---|---|---|
+| Scams marked "be careful" or worse | 17 of 18 | 21 of 22 |
+| Scams marked "uses scam tactics" | 11 of 18 | 18 of 22 |
+| Genuine wrongly flagged | 0 of 1 | 2 of 28 |
+| Same verdict on all 3 runs | 16 of 19 | 41 of 50 |
+
+- **Quote check:** 3 of 437 AI-quoted phrases were not in the message, and code removed them.
+- **Plain-prompt comparison:** on the written cases, the same model with a plain "is this a scam?" prompt flagged 22 of 22 scams but also 3 of 28 genuine messages, including two family money messages, and explains nothing.
+
 ## Limitations
 
-To be completed from the measured results. Known so far:
-- Tested only on Malay, English and Chinese text.
-- For screenshots, quotes are checked against the model's own transcript, which is weaker than checking pasted text.
+- A scam whose text has only one tactic (often one bubble of a longer chat) gets "be careful", not "uses scam tactics".
+- First messages that are only a lure ("your photo is in a group", "wrong number, can we be friends?") have no tactic in the text yet.
+- 13 of 28 genuine written alerts got "be careful", 10 of them only because they name a sender the tool can't verify.
+- Tested on Malay, English and Chinese, and on clean screenshots only.
 - A clean result is not proof of safety; new scams may use tactics outside the rubric.
 
 ## Licence

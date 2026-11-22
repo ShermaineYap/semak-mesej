@@ -1,0 +1,253 @@
+[
+  {
+    "id": "G001",
+    "image": "data/screenshots/G001.png",
+    "class": "genuine",
+    "language": "en",
+    "text": "This account is not allowed to use WhatsApp.",
+    "tactics": [],
+    "hard": false
+  },
+  {
+    "id": "S001",
+    "image": "data/screenshots/S001.png",
+    "class": "scam",
+    "language": "zh",
+    "text": "检测到该账号违反使用条例，点击前往 https://my-whatasapp[.]com 验证本人使用，12小时内未验证将关闭部分功能并封禁",
+    "tactics": [
+      "credential_request",
+      "impersonation",
+      "suspicious_link",
+      "threat",
+      "urgency"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S002",
+    "image": "data/screenshots/S002.png",
+    "class": "scam",
+    "language": "en",
+    "text": "This account has been detected as violating the Terms of Service. Please click to go to https://my-whatasapp[.]com to verify your identity. If verification is not completed within 12 hours, some features will be disabled and your account will be suspended.",
+    "tactics": [
+      "credential_request",
+      "impersonation",
+      "suspicious_link",
+      "threat",
+      "urgency"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S005",
+    "image": "data/screenshots/S005.png",
+    "class": "scam",
+    "language": "en",
+    "text": "RM0（POS MALAYSIA） Your package has been left unclaimed for 24 hours due to a missing address. Please update your address for re-delivery:https://rb[.]gy/rzid1b (Otherwise the package will be returned)",
+    "tactics": [
+      "impersonation",
+      "suspicious_link",
+      "threat",
+      "urgency"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S007",
+    "image": "data/screenshots/S007.png",
+    "class": "scam",
+    "language": "ms",
+    "text": "MAYBANK: Pelanggan yang dihormati, sila tukar password & username perbankan internet anda sekarang kerana terdapat 3 kali cubaan untuk log masuk ke akaun perbankan anda. Sila tukar dengan kadar segera di pautan ini www[.]mayban[.]com/newpassword.",
+    "tactics": [
+      "credential_request",
+      "impersonation",
+      "suspicious_link",
+      "urgency"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S008",
+    "image": "data/screenshots/S008.png",
+    "class": "scam",
+    "language": "ms",
+    "text": "RM0 TNB: Rakyat yang terlibat putus bekalan elektrik akan menerima RM100 pampasan kepada setiap warganegara di TNG eWallet. Sila semak baki dan tuntutan anda di https://touchngologin[.]cc/",
+    "tactics": [
+      "impersonation",
+      "suspicious_link",
+      "too_good_to_be_true"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S012",
+    "image": "data/screenshots/S012.png",
+    "class": "scam",
+    "language": "ms",
+    "text": "Ni khairul aming. Saya nak mintak pinjam rm200 untuk bayar cukai sambal nyet. Bank saya tgh maintenance. Lepas habis maintenace saya akan beli semua akaun [NAME] & saya hadiahkan 1 bekas sambal nyet",
+    "tactics": [
+      "impersonation",
+      "payment_request",
+      "too_good_to_be_true"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S014",
+    "image": "data/screenshots/S014.png",
+    "class": "scam",
+    "language": "en",
+    "text": "The points program reminds you that your account currently has 5340 points, which will expire. Redeemable for New Year gifts: https://pbrewnaridss[.]top/myx",
+    "tactics": [
+      "suspicious_link",
+      "too_good_to_be_true"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S015",
+    "image": "data/screenshots/S015.png",
+    "class": "scam",
+    "language": "en",
+    "text": "RM0 Publicbank: Dear customer, your credit card points are about to expired. Please redeem gift cards, cosmetics and other exclusive gifts. Please log in: https://publicuser[.]work/vip",
+    "tactics": [
+      "credential_request",
+      "impersonation",
+      "suspicious_link",
+      "too_good_to_be_true",
+      "urgency"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S017",
+    "image": "data/screenshots/S017.png",
+    "class": "scam",
+    "language": "mixed",
+    "text": "Charges RM0.50 BNM, Bank memberikan 3% subsidi. http://www[.]mybnm[.]net/",
+    "tactics": [
+      "impersonation",
+      "suspicious_link",
+      "too_good_to_be_true"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S018",
+    "image": "data/screenshots/S018.png",
+    "class": "scam",
+    "language": "ms",
+    "text": "RM0 MySejahtera: Bantuan Khas Kewangan COVID-19 sebanyak RM800 telah kredit ke TNG eWallet anda. Sila semak baki dan tuntutan anda di https://touchngo[.]cc",
+    "tactics": [
+      "impersonation",
+      "suspicious_link",
+      "too_good_to_be_true"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S019",
+    "image": "data/screenshots/S019.png",
+    "class": "scam",
+    "language": "ms",
+    "text": "Aslam..Tak malu ke post benda macem tu dlm grop\nSy nampak ad budak guna gamba awk x senonoh sngt\nGmbr awak kena shere dalm group tu, nampk xelok,Sy nak padam tpi xblh",
+    "tactics": [],
+    "hard": false
+  },
+  {
+    "id": "S021",
+    "image": "data/screenshots/S021.png",
+    "class": "scam",
+    "language": "en",
+    "text": "eWallet help to M40 individuals have been credited to your Touch ‘n Go eWallet accounts. Please check your balance here,",
+    "tactics": [
+      "impersonation",
+      "suspicious_link",
+      "too_good_to_be_true"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S022",
+    "image": "data/screenshots/S022.png",
+    "class": "scam",
+    "language": "ms",
+    "text": "Sila tngk gmbar awak kt grup ni https://viral-malaysia2023[.]usdns[.]eu[.]org/",
+    "tactics": [
+      "suspicious_link"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S023",
+    "image": "data/screenshots/S023.png",
+    "class": "scam",
+    "language": "ms",
+    "text": "Gmbr kau kena shere dalm gp tu, nampk xelok,Sy nak ss kan tp xleh jdi mesti tngk sndiri kat link tu",
+    "tactics": [
+      "suspicious_link"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S024",
+    "image": "data/screenshots/S024.png",
+    "class": "scam",
+    "language": "en",
+    "text": "PDRM Traffic: Unsuccessful toll payment recorded for your vehicle. Please arrange prompt settlement to avoid enforcement action: https://is[.]gd/jpjvsg",
+    "tactics": [
+      "impersonation",
+      "payment_request",
+      "suspicious_link",
+      "threat",
+      "urgency"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S025",
+    "image": "data/screenshots/S025.png",
+    "class": "scam",
+    "language": "en",
+    "text": "once you completing task you can get the payment withing 5-10 minutes",
+    "tactics": [
+      "too_good_to_be_true"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S026",
+    "image": "data/screenshots/S026.png",
+    "class": "scam",
+    "language": "en",
+    "text": "Hurry up for the last round of merchant missions today, my friends.",
+    "tactics": [
+      "urgency"
+    ],
+    "hard": false
+  },
+  {
+    "id": "S028",
+    "image": "data/screenshots/S028.png",
+    "class": "scam",
+    "language": "ms",
+    "text": "Amirul tu anak buah saya. Awak x perlu risau sebab saya memang khairul aming",
+    "tactics": [
+      "impersonation"
+    ],
+    "hard": false
+  },
+  {
+    "id": "CHAT-S012-S028",
+    "image": "data/screenshots/CHAT-S012-S028.png",
+    "class": "scam",
+    "language": "ms",
+    "text": "Ni khairul aming. Saya nak mintak pinjam rm200 untuk bayar cukai sambal nyet. Bank saya tgh maintenance. Lepas habis maintenace saya akan beli semua akaun [NAME] & saya hadiahkan 1 bekas sambal nyet\nAmirul tu anak buah saya. Awak x perlu risau sebab saya memang khairul aming",
+    "tactics": [
+      "impersonation",
+      "payment_request",
+      "too_good_to_be_true"
+    ],
+    "hard": true
+  }
+]

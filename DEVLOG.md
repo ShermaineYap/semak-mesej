@@ -43,3 +43,12 @@ Notable outputs: S027 (a "your photo is in a viral group" lure, labelled with no
 - **Screenshot input, live** (`docs/evidence/chat_S004.png`, a phone-chat rendering of the real message S004 made for this test): transcript correct, 3 tactics found, 0 quotes dropped, verdict `some_signs`. The same text pasted gave 4 tactics and `scam_signs`; the screenshot run missed `payment_request`. **To measure:** screenshot versions of the test set.
 - **Unreadable screenshot, live** (`docs/evidence/chat_S004_blurred.png`, the same image pixelated and blurred): `cant_tell / unreadable_image`, no findings shown (R3a).
 - **Bare number, live:** `cant_tell / identifier_only`, no AI call, Semak Mule link shown (R3b).
+
+## Sun 22 Nov 2026: measured evaluation, video
+
+- Imported 50 written (synthetic) test cases into their own `synth` split; tactic labels drafted by Claude under rules R1-R10 (`data/LABELING.md`), for Shermaine to review. Never used for tuning.
+- Test-set runs, 3 repeats each, plus a plain "is this a scam?" baseline: `results/test-*`, `results/synth-*`, `results/screenshots-*`. 247 runs; 4 AI calls failed (timeouts) and were answered "can't check".
+- **No rule or prompt changes were made after seeing the test results.** The clearest improvement (weight of `impersonation` alone, which caused 10 of 13 "be careful" results on genuine messages) is recorded as a next step, not applied.
+- **Rejected an earlier conclusion (A4b):** "screenshots are weaker than pasted text" came from one live check (S004). The 20-item screenshot evaluation didn't support it (same 12 of 19 scams flagged both ways; 18 vs 16 marked "be careful" or worse). Removed from the limits.
+- **Corrected a claim before publishing:** the first write-up draft said 6 of 7 "be careful" real scams were single chat bubbles. Checking the messages showed 3 were; the accurate version ("only one tactic in the text") is in the write-up.
+- Video (`docs/video/semak-mesej-demo.mp4`, 3:21): phone segments recorded on the live site by `scripts/video/record.py`, Piper TTS narration, assembled by `scripts/video/compose.py`. Every result shown is a live result.

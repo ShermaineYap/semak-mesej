@@ -1,0 +1,74 @@
+[
+ {
+  "name": "n01",
+  "kind": "slide",
+  "slide": "intro",
+  "text": "Malaysians lost six point nine five billion ringgit to online scams between 2023 and August 2026. Most attempts now arrive as messages, often mixing Malay, English and Chinese. Semak Mesej shows the scam tactics in a message, marked on the exact words, before you reply."
+ },
+ {
+  "name": "n02",
+  "kind": "slide",
+  "slide": "tools",
+  "text": "Today, Semak Mule, the police database, checks a phone or account number that someone has already reported. A brand new scam message has nothing to look up yet. Semak Mesej reads the wording itself, and passes any numbers it finds on to Semak Mule."
+ },
+ {
+  "name": "n03",
+  "kind": "phone",
+  "slide": "segA",
+  "rec": "segA",
+  "text": "Here is a real fake Pos Malaysia message. I paste it and check. Each tactic is highlighted on the words that use it. It claims to be Postal Malaysia, says the redelivery cost is yours, pushes a link, and gives you twelve hours. Beside each note is what a real sender would do instead."
+ },
+ {
+  "name": "n04",
+  "kind": "phone",
+  "slide": "segB",
+  "rec": "segB",
+  "text": "A second, different case, in Malay, with the page switched to Bahasa. Someone posing as the celebrity Khairul Aming asks to borrow two hundred ringgit, and promises a gift in return."
+ },
+ {
+  "name": "n05",
+  "kind": "phone",
+  "slide": "segC",
+  "rec": "segC",
+  "text": "Checking the same message a second time gives the same verdict and the same three tactics.",
+  "ss": 9
+ },
+ {
+  "name": "n06",
+  "kind": "phone",
+  "slide": "segD",
+  "rec": "segD",
+  "text": "A harder case: a screenshot with two chat bubbles. The text is read from the image, and code checks every highlighted phrase against that text before it is shown."
+ },
+ {
+  "name": "n07",
+  "kind": "phone",
+  "slide": "segE",
+  "rec": "segE",
+  "text": "When it can't do the job, it says so. A blurred screenshot is refused instead of guessed. A bare phone number never reaches the AI. You are sent to Semak Mule instead. And it never tells you a message is safe."
+ },
+ {
+  "name": "n08",
+  "kind": "slide",
+  "slide": "how",
+  "text": "The design is simple. The AI points, and code decides. Gemini three point five Flash Lite returns the exact phrase for each of eight tactics. Code drops any phrase that is not really in the message, and a rule table, not the AI, decides the verdict."
+ },
+ {
+  "name": "n09",
+  "kind": "slide",
+  "slide": "results",
+  "text": "I measured it against hand labelled messages. On eighteen real scams from police, bank and news sources, it marked seventeen as be careful or worse, and eleven as scam tactics. On fifty written test cases, it flagged two of twenty eight genuine messages, against three for a plain is this a scam prompt, which caught more scams but explains nothing. Only three of four hundred and thirty seven AI quotes were not in the message, and code removed them."
+ },
+ {
+  "name": "n10",
+  "kind": "slide",
+  "slide": "limits",
+  "text": "Know its limits. A scam whose text carries only one tactic, often a single chat bubble, only earns a be careful. A first message that is only a lure has no tactic yet. And nearly half of genuine bank and courier alerts got be careful, because they name a sender it can't verify. I built it with an AI coding assistant. A unit test caught an AI written bug that shifted highlights after an emoji, and I changed the code."
+ },
+ {
+  "name": "n11",
+  "kind": "slide",
+  "slide": "end",
+  "text": "Semak Mesej. Try it at semak mesej dot vercel dot app."
+ }
+]

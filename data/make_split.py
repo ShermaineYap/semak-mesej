@@ -25,8 +25,10 @@ assigned = {i: s for s, ids in split.items() for i in ids}
 THREADS = {"S001": "T-wa-ban", "S002": "T-wa-ban", "S012": "T-sambal", "S028": "T-sambal"}
 
 groups = defaultdict(list)
+# Synthetic (written) test cases are reported separately and never used for tuning.
+split["synth"] = sorted(r["id"] for r in rows if r.get("synthetic"))
 for r in rows:
-    if r.get("verbatim") is False:
+    if r.get("verbatim") is False or r.get("synthetic"):
         continue
     key = r.get("thread") or THREADS.get(r["id"]) or r["id"]
     groups[key].append(r)

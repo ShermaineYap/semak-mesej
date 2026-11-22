@@ -87,6 +87,7 @@ async function main() {
   const rows: {
     id: string;
     cls: Item["class"];
+    lang: string;
     expected: TacticId[];
     runs: AnalysisResult[];
     baseline: (boolean | null)[];
@@ -98,12 +99,12 @@ async function main() {
     for (let r = 0; r < repeats; r++) {
       runs.push(await analyze({ text: item.text }, provider));
       await sleep(delayMs);
-      if (withBaseline) {
+      if (withBaseline && r === 0) {
         base.push(await baseline(provider, item.text));
         await sleep(delayMs);
       }
     }
-    rows.push({ id: item.id, cls: item.class, expected: item.tactics, runs, baseline: base });
+    rows.push({ id: item.id, cls: item.class, lang: item.language, expected: item.tactics, runs, baseline: base });
     const v = runs.map((x) => x.verdict.verdict).join(",");
     process.stdout.write(`${item.id} ${item.class.padEnd(7)} ${v}\n`);
   }
@@ -181,6 +182,17 @@ async function main() {
     `- Quotes found in the message (kept): ${kept}; not found (dropped): ${dropped} (${pct(dropped, kept + dropped)} dropped)`,
     `- Same verdict and tactics on every repeat: ${repeatSame} of ${rows.length}`,
     `- Median latency: ${median} ms`,
+    "",
+    "## By language (first run)",
+    "",
+    "| Language | Scams flagged | Scams caution or worse | Genuine wrongly flagged | Genuine marked caution |",
+    "|---|---|---|---|---|",
+    ...[...new Set(first.map((r) => r.lang))].sort().map((lang) => {
+      const s = first.filter((r) => r.lang === lang && r.cls === "scam");
+      const g = first.filter((r) => r.lang === lang && r.cls === "genuine");
+      const v = (r: (typeof first)[number]) => r.res.verdict.verdict;
+      return `| ${lang} | ${s.filter((r) => flagged(v(r))).length}/${s.length} | ${s.filter((r) => flaggedOrCaution(v(r))).length}/${s.length} | ${g.filter((r) => flagged(v(r))).length}/${g.length} | ${g.filter((r) => v(r) === "some_signs").length}/${g.length} |`;
+    }),
     "",
     "## Tactic agreement with labels (first run)",
     "",
