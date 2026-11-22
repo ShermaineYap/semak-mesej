@@ -28,7 +28,7 @@ Labels were drafted by an AI research assistant from public sources, then the ru
 
 ## Synthetic test cases (added 22 Nov 2026)
 
-`data/synthetic/scam_test_set_synthetic.csv` holds 50 **written** test cases (28 genuine, 22 scam), not messages anyone received. They are imported with ids `XG01`-`XG28` and `XS01`-`XS22`, marked `synthetic: true`, put in their own `synth` split, and **reported separately** from the real messages. They were never used to choose the prompt, model or weights.
+`data/synthetic/scam_test_set_synthetic.csv` holds 50 **written** test cases (28 genuine, 22 scam), written by Shermaine; they are not messages anyone received. They are imported with ids `XG01`-`XG28` and `XS01`-`XS22`, marked `synthetic: true`, put in their own `synth` split, and **reported separately** from the real messages. They were never used to choose the prompt, model or weights.
 
 Tactic labels were drafted by Claude under the rules above plus R7-R10 below, for Shermaine to review. Labels describe what the text does, so genuine messages carry tactics too (a real TNB bill makes a payment request and claims to be TNB). Whether a message is a scam is the separate `class` field.
 

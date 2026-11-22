@@ -1,6 +1,6 @@
 # Semak Mesej: Devpost write-up
 
-> Ready to paste, except the three `[TO FILL]` items, which only Shermaine can supply: the AIFA test, who wrote the written test cases, and her own code review. Check IDs in brackets map to the published rubric.
+> Ready to paste, except the `[TO FILL]` items, which only Shermaine can supply: the AIFA test and her own code review. Check IDs in brackets map to the published rubric.
 
 **Tagline:** See the scam tactics in a suspicious WhatsApp or SMS, marked on the exact words, before you reply.
 
@@ -84,7 +84,7 @@ Because of these results, the app retries once when Gemini is overloaded, then f
 There are two hand-labelled sets, reported separately. Each message is labelled with the tactics it uses, under written rules (`data/LABELING.md`). The prompt and model were chosen on a separate 7-message development split, and the test sets were never used for tuning.
 
 - **Real messages:** 18 scams quoted word for word from Malaysian police, bank and news sources (each with its URL in `data/SOURCES.md`), plus 1 genuine notice.
-- **Written test cases:** 22 scam and 28 genuine messages written in Malaysian formats, `[TO FILL: who wrote them — Shermaine, or an AI tool she used]`. They are not messages anyone received.
+- **Written test cases:** 22 scam and 28 genuine messages written by Shermaine in Malaysian message formats, to cover languages and hard cases the public sources lacked (Chinese, mixed-language, family money requests, real-looking bank codes). They are not messages anyone received.
 
 Each message was run 3 times. Results are from the first run unless stated.
 
@@ -154,7 +154,7 @@ The code was drafted with an AI coding assistant (Claude). Every AI-written func
 - **AI in the product:** Google Gemini API (3.5 Flash-Lite, with 3.5 Flash as fallback).
 - **AI in development:** Claude (Anthropic) as a coding and research assistant. It also drafted the tactic labels, which Shermaine reviews.
 - **Video narration:** computer-generated with Piper TTS.
-- **Test data:** the written test cases are synthetic, as stated above. Screenshots in the screenshot evaluation are renderings of real messages in a generic chat layout.
+- **Test data:** the 50 written test cases were written by Shermaine; they are synthetic, as stated above. Screenshots in the screenshot evaluation are renderings of real messages in a generic chat layout.
 
 ## Built with
 
